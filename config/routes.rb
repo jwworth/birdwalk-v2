@@ -10,7 +10,9 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   namespace :admin do
-    root to: redirect("/admin/birds")
+    root to: redirect("/admin/challenges")
+    resources :challenges, except: :show
+    resources :locations, except: :show
     resources :birds, except: :show
   end
 

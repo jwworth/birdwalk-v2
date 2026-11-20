@@ -5,3 +5,15 @@ blue_jay:
 canada_jay:
   common_name: Canada Jay
   scientific_name: Perisoreus canadensis
+
+american_robin:
+  common_name: American Robin
+  scientific_name: Turdus migratorius
+
+black_capped_chickadee:
+  common_name: Black-capped Chickadee
+  scientific_name: Poecile atricapillus
+
+cedar_waxwing:
+  common_name: Cedar Waxwing
+  scientific_name: Bombycilla cedrorum

@@ -14,6 +14,8 @@
     <header class="admin-header">
       <%= link_to "BirdWalk Admin", admin_root_path, class: "admin-brand" %>
       <nav>
+        <%= link_to "Challenges", admin_challenges_path %>
+        <%= link_to "Locations", admin_locations_path %>
         <%= link_to "Birds", admin_birds_path %>
       </nav>
     </header>
@@ -21,6 +23,9 @@
     <main class="admin-main">
       <% if notice %>
         <p class="notice"><%= notice %></p>
+      <% end %>
+      <% if alert %>
+        <p class="alert"><%= alert %></p>
       <% end %>
 
       <%= yield %>

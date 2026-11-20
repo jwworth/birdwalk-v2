@@ -65,9 +65,18 @@ class Admin::BirdsControllerTest < ActionDispatch::IntegrationTest
 
   test "deletes a bird" do
     assert_difference "Bird.count", -1 do
+      delete admin_bird_path(birds(:cedar_waxwing)), headers: @auth
+    end
+
+    assert_redirected_to admin_birds_path
+  end
+
+  test "does not delete a bird used in a challenge" do
+    assert_no_difference "Bird.count" do
       delete admin_bird_path(@bird), headers: @auth
     end
 
     assert_redirected_to admin_birds_path
+    assert_equal "Blue Jay is used in a challenge and can't be deleted.", flash[:alert]
   end
 end

@@ -27,6 +27,11 @@ a {
   background: #fff;
 }
 
+.admin-header nav {
+  display: flex;
+  gap: 1.25rem;
+}
+
 .admin-brand {
   font-weight: 600;
   color: var(--ink);
@@ -51,6 +56,7 @@ a {
   background: #eef3ec;
 }
 
+.alert,
 .errors {
   padding: 0.75rem 1rem;
   border-left: 4px solid var(--danger);
@@ -93,7 +99,8 @@ th {
   max-width: 28rem;
 }
 
-.field input {
+.field input,
+.field select {
   padding: 0.5rem;
   border: 1px solid var(--line);
   border-radius: 4px;
@@ -129,5 +136,45 @@ th {
 }
 
 .danger {
+  color: var(--danger);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.status {
+  font-size: 0.875rem;
+}
+
+.status.playable {
+  color: var(--accent);
+}
+
+.status.incomplete {
+  color: var(--muted);
+}
+
+.round {
+  margin: 0 0 1.25rem;
+  padding: 1rem 1.25rem 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+}
+
+.round legend {
+  padding: 0 0.5rem;
+  font-weight: 600;
+}
+
+.round-birds {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0 1rem;
+}
+
+.round-errors {
+  margin-top: 0;
   color: var(--danger);
 }

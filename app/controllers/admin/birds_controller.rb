@@ -34,6 +34,8 @@ module Admin
     def destroy
       @bird.destroy!
       redirect_to admin_birds_path, notice: "#{@bird.common_name} was deleted.", status: :see_other
+    rescue ActiveRecord::InvalidForeignKey
+      redirect_to admin_birds_path, alert: "#{@bird.common_name} is used in a challenge and can't be deleted.", status: :see_other
     end
 
     private
