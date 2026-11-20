@@ -1,0 +1,9 @@
+<% 1.upto(5) do |position| %>
+acadia_round_<%= position %>:
+  challenge: acadia
+  position: <%= position %>
+  correct_bird: blue_jay
+  first_distractor: canada_jay
+  second_distractor: american_robin
+  third_distractor: black_capped_chickadee
+<% end %>

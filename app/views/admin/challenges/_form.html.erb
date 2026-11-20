@@ -1,0 +1,69 @@
+<%= form_with model: [ :admin, challenge ] do |form| %>
+  <% challenge_errors = challenge.errors.reject { |error| error.attribute.to_s.start_with?("rounds") } %>
+  <% if challenge_errors.any? || challenge.rounds.any? { |round| round.errors.any? } %>
+    <div class="errors">
+      <p>This challenge couldn't be saved. Please fix the problems below.</p>
+      <% if challenge_errors.any? %>
+        <ul>
+          <% challenge_errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :location_id, "Location" %>
+    <%= form.collection_select :location_id, @locations, :id, :display_name,
+          { prompt: "Choose a location" }, { required: true } %>
+  </div>
+
+  <div class="field">
+    <%= form.label :rotation_position %>
+    <%= form.number_field :rotation_position, min: 1, step: 1, required: true %>
+  </div>
+
+  <% if @locations.empty? %>
+    <p class="muted">Add a <%= link_to "location", new_admin_location_path %> before creating a challenge.</p>
+  <% end %>
+
+  <%= form.fields_for :rounds, challenge.rounds.sort_by(&:position) do |round_form| %>
+    <% round = round_form.object %>
+    <fieldset class="round">
+      <legend>
+        Round <%= round.position %>
+        <% if round.complete? %>
+          <span class="status playable">Complete</span>
+        <% end %>
+      </legend>
+
+      <% if round.errors.any? %>
+        <ul class="round-errors">
+          <% round.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <%= round_form.hidden_field :position %>
+
+      <div class="round-birds">
+        <% { correct_bird_id: "Correct bird",
+             first_distractor_id: "Distractor 1",
+             second_distractor_id: "Distractor 2",
+             third_distractor_id: "Distractor 3" }.each do |attribute, label| %>
+          <div class="field">
+            <%= round_form.label attribute, label %>
+            <%= round_form.collection_select attribute, @birds, :id, :common_name, include_blank: true %>
+          </div>
+        <% end %>
+      </div>
+    </fieldset>
+  <% end %>
+
+  <div class="form-actions">
+    <%= form.submit class: "button" %>
+    <%= link_to "Cancel", admin_challenges_path %>
+  </div>
+<% end %>

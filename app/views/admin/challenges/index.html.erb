@@ -1,0 +1,44 @@
+<% content_for :title, "Challenges" %>
+
+<div class="page-heading">
+  <h1>Challenges</h1>
+  <%= link_to "New challenge", new_admin_challenge_path, class: "button" %>
+</div>
+
+<% if @challenges.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @challenges.each do |challenge| %>
+        <tr>
+          <td><%= challenge.rotation_position %></td>
+          <td><%= challenge.location.display_name %></td>
+          <td>
+            <% if challenge.playable? %>
+              <span class="status playable">Playable</span>
+            <% else %>
+              <span class="status incomplete">
+                Incomplete (<%= challenge.complete_round_count %> of <%= Challenge::ROUND_COUNT %> rounds)
+              </span>
+            <% end %>
+          </td>
+          <td class="actions">
+            <%= link_to "Edit", edit_admin_challenge_path(challenge) %>
+            <%= button_to "Delete", admin_challenge_path(challenge), method: :delete,
+                  class: "button-link danger",
+                  form: { onsubmit: "return confirm('Delete this challenge and its rounds?')" } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No challenges yet.</p>
+<% end %>

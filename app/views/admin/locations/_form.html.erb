@@ -1,0 +1,27 @@
+<%= form_with model: [ :admin, location ] do |form| %>
+  <% if location.errors.any? %>
+    <div class="errors">
+      <p><%= pluralize(location.errors.count, "error") %> prevented this location from being saved:</p>
+      <ul>
+        <% location.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name, required: true, autofocus: true %>
+  </div>
+
+  <div class="field">
+    <%= form.label :state %>
+    <%= form.text_field :state, required: true %>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "button" %>
+    <%= link_to "Cancel", admin_locations_path %>
+  </div>
+<% end %>
