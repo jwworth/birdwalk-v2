@@ -28,6 +28,9 @@ bin/dev
 Runs the Rails server and the Vite dev server together. Visit
 http://localhost:3000.
 
+The admin is at http://localhost:3000/admin. Locally, sign in with `admin` /
+`password`, or set `ADMIN_USERNAME` and `ADMIN_PASSWORD`.
+
 ## Checks
 
 ```sh
@@ -40,4 +43,5 @@ bin/rubocop
 
 The `Dockerfile` builds a single production image. Vite assets are compiled
 during `assets:precompile`. The app needs a PostgreSQL database
-(`DATABASE_URL`) and `RAILS_MASTER_KEY`.
+(`DATABASE_URL`), `RAILS_MASTER_KEY`, and admin credentials (`ADMIN_USERNAME`
+and `ADMIN_PASSWORD`).
