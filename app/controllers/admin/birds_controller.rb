@@ -45,7 +45,7 @@ module Admin
     end
 
     def bird_params
-      params.expect(bird: [ :common_name, :scientific_name ])
+      params.expect(bird: [ :common_name, :scientific_name, :fact ])
     end
   end
 end

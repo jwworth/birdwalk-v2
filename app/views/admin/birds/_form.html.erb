@@ -20,6 +20,12 @@
     <%= form.text_field :scientific_name, required: true %>
   </div>
 
+  <div class="field">
+    <%= form.label :fact %>
+    <%= form.text_area :fact, rows: 3, maxlength: Bird::FACT_MAX_LENGTH %>
+    <small class="muted">A short, interesting fact shown on the results page. Up to <%= Bird::FACT_MAX_LENGTH %> characters.</small>
+  </div>
+
   <div class="form-actions">
     <%= form.submit class: "button" %>
     <%= link_to "Cancel", admin_birds_path %>

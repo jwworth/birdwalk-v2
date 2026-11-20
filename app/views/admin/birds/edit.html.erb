@@ -2,6 +2,15 @@
 
 <h1>Edit bird</h1>
 
+<section class="bird-fact">
+  <h2>Fact</h2>
+  <% if @bird.fact_in_database.present? %>
+    <p><%= @bird.fact_in_database %></p>
+  <% else %>
+    <p class="muted">No fact yet.</p>
+  <% end %>
+</section>
+
 <%= render "form", bird: @bird %>
 
 <section class="photos">

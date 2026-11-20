@@ -55,6 +55,55 @@ class Admin::BirdsControllerTest < ActionDispatch::IntegrationTest
     assert_select ".errors li", "Scientific name can't be blank"
   end
 
+  test "creates a bird with a fact" do
+    post admin_birds_path, headers: @auth, params: {
+      bird: { common_name: "Eastern Bluebird", scientific_name: "Sialia sialis", fact: "Bluebirds nest in tree cavities." }
+    }
+
+    assert_redirected_to admin_birds_path
+    assert_equal "Bluebirds nest in tree cavities.", Bird.find_by!(common_name: "Eastern Bluebird").fact
+  end
+
+  test "updates a bird's fact" do
+    patch admin_bird_path(@bird), headers: @auth, params: { bird: { fact: "Blue Jays cache acorns." } }
+
+    assert_redirected_to admin_birds_path
+    assert_equal "Blue Jays cache acorns.", @bird.reload.fact
+  end
+
+  test "rejects a fact that is too long" do
+    patch admin_bird_path(@bird), headers: @auth, params: { bird: { fact: "a" * 281 } }
+
+    assert_response :unprocessable_content
+    assert_select ".errors li", "Fact is too long (maximum is 280 characters)"
+    assert_select ".bird-fact p", "Blue Jays often mimic the calls of Red-shouldered Hawks."
+  end
+
+  test "bird page shows the fact" do
+    get edit_admin_bird_path(@bird), headers: @auth
+
+    assert_response :success
+    assert_select ".bird-fact p", "Blue Jays often mimic the calls of Red-shouldered Hawks."
+    assert_select "textarea[name='bird[fact]']", "Blue Jays often mimic the calls of Red-shouldered Hawks."
+  end
+
+  test "bird page notes a missing fact" do
+    get edit_admin_bird_path(birds(:canada_jay)), headers: @auth
+
+    assert_select ".bird-fact p.muted", "No fact yet."
+  end
+
+  test "bird list shows which birds have facts" do
+    get admin_birds_path, headers: @auth
+
+    assert_select "tr", text: /Blue Jay/ do
+      assert_select "td.fact-status", "Yes"
+    end
+    assert_select "tr", text: /Canada Jay/ do
+      assert_select "td.fact-status", "Missing"
+    end
+  end
+
   test "updates a bird" do
     patch admin_bird_path(@bird), headers: @auth,
       params: { bird: { common_name: "Northern Blue Jay" } }

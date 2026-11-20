@@ -11,6 +11,7 @@
       <tr>
         <th>Common name</th>
         <th>Scientific name</th>
+        <th>Fact</th>
         <th>Photos</th>
         <th></th>
       </tr>
@@ -20,6 +21,13 @@
         <tr>
           <td><%= bird.common_name %></td>
           <td><em><%= bird.scientific_name %></em></td>
+          <td class="fact-status">
+            <% if bird.fact.present? %>
+              Yes
+            <% else %>
+              <span class="muted">Missing</span>
+            <% end %>
+          </td>
           <td class="photo-count"><%= bird.photos.size %></td>
           <td class="actions">
             <%= link_to "Edit", edit_admin_bird_path(bird) %>
