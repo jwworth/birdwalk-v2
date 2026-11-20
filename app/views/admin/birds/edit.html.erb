@@ -3,3 +3,30 @@
 <h1>Edit bird</h1>
 
 <%= render "form", bird: @bird %>
+
+<section class="photos">
+  <div class="page-heading">
+    <h2>Photos</h2>
+    <%= link_to "Add photo", new_admin_bird_photo_path(@bird), class: "button" %>
+  </div>
+
+  <% photos = @bird.photos.with_attached_image.order(:created_at) %>
+  <% if photos.any? %>
+    <% photos.each do |photo| %>
+      <figure class="photo">
+        <%= image_tag photo.image, alt: @bird.common_name %>
+        <figcaption>
+          <%= render "admin/photos/attribution", photo: photo %>
+          <div class="actions">
+            <%= link_to "Edit", edit_admin_bird_photo_path(@bird, photo) %>
+            <%= button_to "Delete", admin_bird_photo_path(@bird, photo), method: :delete,
+                  class: "button-link danger",
+                  form: { onsubmit: "return confirm('Delete this photo?')" } %>
+          </div>
+        </figcaption>
+      </figure>
+    <% end %>
+  <% else %>
+    <p class="muted">No photos yet.</p>
+  <% end %>
+</section>

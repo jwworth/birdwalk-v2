@@ -3,7 +3,7 @@ module Admin
     before_action :set_bird, only: %i[edit update destroy]
 
     def index
-      @birds = Bird.order(:common_name)
+      @birds = Bird.includes(:photos).order(:common_name)
     end
 
     def new

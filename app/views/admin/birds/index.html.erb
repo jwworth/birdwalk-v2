@@ -11,6 +11,7 @@
       <tr>
         <th>Common name</th>
         <th>Scientific name</th>
+        <th>Photos</th>
         <th></th>
       </tr>
     </thead>
@@ -19,6 +20,7 @@
         <tr>
           <td><%= bird.common_name %></td>
           <td><em><%= bird.scientific_name %></em></td>
+          <td class="photo-count"><%= bird.photos.size %></td>
           <td class="actions">
             <%= link_to "Edit", edit_admin_bird_path(bird) %>
             <%= button_to "Delete", admin_bird_path(bird), method: :delete,

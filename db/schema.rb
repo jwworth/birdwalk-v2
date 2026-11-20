@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_181020) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_182423) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "birds", force: :cascade do |t|
     t.string "common_name", null: false
@@ -41,6 +69,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_181020) do
     t.index "lower((name)::text), state", name: "index_locations_on_lower_name_and_state", unique: true
   end
 
+  create_table "photos", force: :cascade do |t|
+    t.bigint "bird_id", null: false
+    t.string "source_url", null: false
+    t.string "creator", null: false
+    t.string "license_name", null: false
+    t.string "license_url", null: false
+    t.text "attribution_notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bird_id"], name: "index_photos_on_bird_id"
+  end
+
   create_table "rounds", force: :cascade do |t|
     t.bigint "challenge_id", null: false
     t.integer "position", null: false
@@ -60,7 +100,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_181020) do
     t.check_constraint "correct_bird_id <> first_distractor_id AND correct_bird_id <> second_distractor_id AND correct_bird_id <> third_distractor_id AND first_distractor_id <> second_distractor_id AND first_distractor_id <> third_distractor_id AND second_distractor_id <> third_distractor_id", name: "rounds_distinct_birds"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "challenges", "locations"
+  add_foreign_key "photos", "birds"
   add_foreign_key "rounds", "birds", column: "correct_bird_id"
   add_foreign_key "rounds", "birds", column: "first_distractor_id"
   add_foreign_key "rounds", "birds", column: "second_distractor_id"

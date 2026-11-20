@@ -1,0 +1,5 @@
+<% content_for :title, "Edit photo" %>
+
+<h1>Edit photo of <%= @bird.common_name %></h1>
+
+<%= render "form", bird: @bird, photo: @photo %>

@@ -1,0 +1,55 @@
+<%= form_with model: [ :admin, bird, photo ] do |form| %>
+  <% if photo.errors.any? %>
+    <div class="errors">
+      <p><%= pluralize(photo.errors.count, "error") %> prevented this photo from being saved:</p>
+      <ul>
+        <% photo.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if photo.image.attached? && photo.image.blob.persisted? %>
+    <figure class="photo">
+      <%= image_tag photo.image, alt: bird.common_name %>
+    </figure>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :image, photo.persisted? ? "Replace image (optional)" : "Image" %>
+    <%= form.file_field :image, accept: Photo::IMAGE_TYPES.join(","), required: photo.new_record? %>
+    <small class="muted">JPEG, PNG, or WebP, up to 10 MB.</small>
+  </div>
+
+  <div class="field">
+    <%= form.label :source_url, "Wikimedia source URL" %>
+    <%= form.url_field :source_url, required: true, placeholder: "https://commons.wikimedia.org/wiki/File:..." %>
+  </div>
+
+  <div class="field">
+    <%= form.label :creator %>
+    <%= form.text_field :creator, required: true %>
+  </div>
+
+  <div class="field">
+    <%= form.label :license_name %>
+    <%= form.text_field :license_name, required: true, placeholder: "CC BY-SA 4.0" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :license_url, "License URL" %>
+    <%= form.url_field :license_url, required: true, placeholder: "https://creativecommons.org/licenses/by-sa/4.0/" %>
+  </div>
+
+  <div class="field">
+    <%= form.label :attribution_notes, "Additional attribution (optional)" %>
+    <%= form.text_area :attribution_notes, rows: 3 %>
+    <small class="muted">Anything else the license requires, such as noting that the image was cropped.</small>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "button" %>
+    <%= link_to "Cancel", edit_admin_bird_path(bird) %>
+  </div>
+<% end %>

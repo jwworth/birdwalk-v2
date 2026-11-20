@@ -13,7 +13,9 @@ Rails.application.routes.draw do
     root to: redirect("/admin/challenges")
     resources :challenges, except: :show
     resources :locations, except: :show
-    resources :birds, except: :show
+    resources :birds, except: :show do
+      resources :photos, except: %i[index show]
+    end
   end
 
   root "game#show"

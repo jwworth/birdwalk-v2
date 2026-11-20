@@ -1,0 +1,8 @@
+<p class="attribution">
+  Photo by <%= photo.creator %>
+  · <%= link_to photo.license_name, photo.license_url, target: "_blank", rel: "noopener" %>
+  · <%= link_to "Source", photo.source_url, target: "_blank", rel: "noopener" %>
+  <% if photo.attribution_notes %>
+    · <%= photo.attribution_notes %>
+  <% end %>
+</p>
