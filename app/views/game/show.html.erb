@@ -4,4 +4,4 @@
   <%= vite_javascript_tag "application.tsx" %>
 <% end %>
 
-<div id="root"></div>
+<%= tag.div id: "root", data: { challenge_id: @challenge&.id } %>
