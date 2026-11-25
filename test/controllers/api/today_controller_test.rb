@@ -1,23 +1,26 @@
 require "test_helper"
 
-class Api::ChallengesControllerTest < ActionDispatch::IntegrationTest
+class Api::TodayControllerTest < ActionDispatch::IntegrationTest
   setup do
     @challenge = challenges(:acadia)
   end
 
-  test "returns a playable challenge with its location and five ordered rounds" do
-    get api_challenge_path(@challenge)
+  test "returns today's challenge with its location, date, and five ordered rounds" do
+    travel_to Time.utc(2026, 11, 25, 17) do
+      get api_today_path
+    end
 
     assert_response :success
     json = response.parsed_body
     assert_equal @challenge.id, json["id"]
+    assert_equal "2026-11-25", json["date"]
     assert_equal({ "name" => "Acadia National Park", "state" => "Maine" }, json["location"])
     assert_equal [ 1, 2, 3, 4, 5 ], json["rounds"].map { |round| round["position"] }
     assert_equal (1..5).map { |position| rounds(:"acadia_round_#{position}").id }, json["rounds"].map { |round| round["id"] }
   end
 
   test "each round has four distinct choices with only an id and common name" do
-    get api_challenge_path(@challenge)
+    get api_today_path
 
     expected_ids = [ :blue_jay, :canada_jay, :american_robin, :black_capped_chickadee ].map { |name| birds(name).id }
     response.parsed_body["rounds"].each do |round|
@@ -29,7 +32,7 @@ class Api::ChallengesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "includes the photo URL and attribution metadata" do
-    get api_challenge_path(@challenge)
+    get api_today_path
 
     photo = response.parsed_body["rounds"].first["photo"]
     fixture = photos(:blue_jay)
@@ -48,13 +51,13 @@ class Api::ChallengesControllerTest < ActionDispatch::IntegrationTest
     )
     assert newer.created_at > photos(:blue_jay).created_at
 
-    get api_challenge_path(@challenge)
+    get api_today_path
 
     assert_equal [ photos(:blue_jay).creator ], response.parsed_body["rounds"].map { |round| round.dig("photo", "creator") }.uniq
   end
 
   test "does not reveal the correct answer, scientific names, or facts" do
-    get api_challenge_path(@challenge)
+    get api_today_path
 
     rounds = response.parsed_body["rounds"]
     assert_equal %w[choices id photo position], rounds.flat_map(&:keys).uniq.sort
@@ -63,34 +66,48 @@ class Api::ChallengesControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, birds(:blue_jay).fact
   end
 
-  test "returns not found for a missing challenge" do
-    get api_challenge_path(id: 0)
-
-    assert_response :not_found
-    assert_equal({ "error" => "Challenge not found" }, response.parsed_body)
-  end
-
-  test "returns not found for a challenge with an incomplete round" do
+  test "returns not found when no challenge is playable" do
     rounds(:acadia_round_3).update!(third_distractor: nil)
 
-    get api_challenge_path(@challenge)
+    get api_today_path
 
     assert_response :not_found
+    assert_equal({ "error" => "No challenge is available today" }, response.parsed_body)
+    assert_equal 0, DailyChallenge.count
   end
 
-  test "returns not found for a challenge with fewer than five rounds" do
-    rounds(:acadia_round_5).destroy!
+  test "changes challenge at midnight in New York during standard time" do
+    second = create_playable_challenge("Zion National Park", rotation_position: 2)
 
-    get api_challenge_path(@challenge)
+    travel_to(Time.utc(2026, 11, 26, 4, 59)) { get api_today_path }
+    assert_equal [ @challenge.id, "2026-11-25" ], response.parsed_body.values_at("id", "date")
 
-    assert_response :not_found
+    travel_to(Time.utc(2026, 11, 26, 5, 0)) { get api_today_path }
+    assert_equal [ second.id, "2026-11-26" ], response.parsed_body.values_at("id", "date")
   end
 
-  test "returns not found when a correct bird has no photo" do
-    rounds(:acadia_round_2).update!(correct_bird: birds(:cedar_waxwing))
+  test "changes challenge at midnight in New York during daylight saving time" do
+    second = create_playable_challenge("Zion National Park", rotation_position: 2)
 
-    get api_challenge_path(@challenge)
+    travel_to(Time.utc(2026, 7, 5, 3, 59)) { get api_today_path }
+    assert_equal [ @challenge.id, "2026-07-04" ], response.parsed_body.values_at("id", "date")
 
-    assert_response :not_found
+    travel_to(Time.utc(2026, 7, 5, 4, 0)) { get api_today_path }
+    assert_equal [ second.id, "2026-07-05" ], response.parsed_body.values_at("id", "date")
+  end
+
+  test "a challenge started before midnight can still be scored after midnight" do
+    create_playable_challenge("Zion National Park", rotation_position: 2)
+
+    travel_to(Time.utc(2026, 11, 26, 4, 55)) { get api_today_path }
+    started = response.parsed_body
+    answers = started["rounds"].map { |round| { round_id: round["id"], bird_id: round["choices"].first["id"] } }
+
+    travel_to(Time.utc(2026, 11, 26, 5, 5)) do
+      post api_challenge_score_path(started["id"]), params: { answers: answers }, as: :json
+    end
+
+    assert_response :success
+    assert_equal @challenge.id, response.parsed_body["id"]
   end
 end

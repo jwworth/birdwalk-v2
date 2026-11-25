@@ -89,7 +89,7 @@ class Api::ScoresControllerTest < ActionDispatch::IntegrationTest
         .merge(creator: "Newer Photographer", image: { io: file_fixture("photo.png").open, filename: "photo.png" })
     )
 
-    get api_challenge_path(@challenge)
+    get api_today_path
     game_photos = response.parsed_body["rounds"].map { |round| round["photo"] }
 
     submit answers_choosing(*[ :blue_jay ] * 5)

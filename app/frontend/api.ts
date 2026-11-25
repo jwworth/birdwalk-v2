@@ -26,6 +26,7 @@ export type Round = {
 
 export type Challenge = {
   id: number
+  date: string
   location: Location
   rounds: Round[]
 }
@@ -52,8 +53,8 @@ export type ScoreResult = {
   rounds: RoundResult[]
 }
 
-export function fetchChallenge(challengeId: string): Promise<Challenge> {
-  return request(`/api/challenges/${challengeId}`)
+export function fetchToday(): Promise<Challenge> {
+  return request('/api/today')
 }
 
 export function submitScore(challengeId: number, answers: Answer[]): Promise<ScoreResult> {

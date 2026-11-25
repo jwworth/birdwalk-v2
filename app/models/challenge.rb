@@ -3,6 +3,7 @@ class Challenge < ApplicationRecord
 
   belongs_to :location
   has_many :rounds, -> { order(:position) }, dependent: :destroy, inverse_of: :challenge
+  has_many :daily_challenges, dependent: :delete_all
 
   accepts_nested_attributes_for :rounds, reject_if: :new_blank_round?
 

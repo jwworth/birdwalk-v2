@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { fetchChallenge, submitScore, type Answer, type Challenge, type ScoreResult } from './api'
+import { fetchToday, submitScore, type Answer, type Challenge, type ScoreResult } from './api'
 import GameScreen from './components/GameScreen'
 import HomeScreen from './components/HomeScreen'
 import ResultsScreen from './components/ResultsScreen'
@@ -11,22 +11,15 @@ type GameState =
   | { screen: 'scoring'; challenge: Challenge; answers: Answer[]; status: 'submitting' | 'error'; error?: string }
   | { screen: 'complete'; challenge: Challenge; answers: Answer[]; score: ScoreResult }
 
-type Props = {
-  challengeId?: string
-  challengeDate: string
-}
-
-export default function App({ challengeId, challengeDate }: Props) {
+export default function App() {
   const [state, setState] = useState<GameState>({ screen: 'home', status: 'idle' })
   // Clicks can arrive before React re-renders, so state alone can't prevent a second submission.
   const scoring = useRef(false)
 
   async function play() {
-    if (!challengeId) return
-
     setState({ screen: 'home', status: 'loading' })
     try {
-      const challenge = await fetchChallenge(challengeId)
+      const challenge = await fetchToday()
       setState({ screen: 'playing', challenge, answers: [] })
     } catch (error) {
       setState({ screen: 'home', status: 'error', error: messageFor(error) })
@@ -68,7 +61,6 @@ export default function App({ challengeId, challengeDate }: Props) {
       case 'home':
         return (
           <HomeScreen
-            available={Boolean(challengeId)}
             loading={state.status === 'loading'}
             error={state.error}
             onPlay={play}
@@ -93,7 +85,7 @@ export default function App({ challengeId, challengeDate }: Props) {
           />
         )
       case 'complete':
-        return <ResultsScreen score={state.score} challengeDate={challengeDate} />
+        return <ResultsScreen score={state.score} challengeDate={state.challenge.date} />
     }
   }
 }

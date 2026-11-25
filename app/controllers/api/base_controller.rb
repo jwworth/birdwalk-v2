@@ -14,6 +14,23 @@ module Api
       Challenge.playable.with_game_data.find(id)
     end
 
+    def challenge_json(challenge)
+      {
+        id: challenge.id,
+        location: location_json(challenge.location),
+        rounds: challenge.rounds.map { |round| round_json(round) }
+      }
+    end
+
+    def round_json(round)
+      {
+        id: round.id,
+        position: round.position,
+        photo: photo_json(round.photo),
+        choices: round.birds.shuffle.map { |bird| bird.as_json(only: %i[id common_name]) }
+      }
+    end
+
     def location_json(location)
       location.as_json(only: %i[name state])
     end

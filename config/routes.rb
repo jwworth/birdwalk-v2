@@ -19,7 +19,8 @@ Rails.application.routes.draw do
   end
 
   namespace :api do
-    resources :challenges, only: :show do
+    get "today", to: "today#show"
+    resources :challenges, only: [] do
       resource :score, only: :create
     end
   end

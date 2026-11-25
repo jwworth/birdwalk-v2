@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_183527) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_25_181442) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -62,6 +62,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_183527) do
     t.check_constraint "rotation_position > 0", name: "challenges_rotation_position_positive"
   end
 
+  create_table "daily_challenges", force: :cascade do |t|
+    t.date "date", null: false
+    t.bigint "challenge_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["challenge_id"], name: "index_daily_challenges_on_challenge_id"
+    t.index ["date"], name: "index_daily_challenges_on_date", unique: true
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name", null: false
     t.string "state", null: false
@@ -104,6 +113,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_183527) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "challenges", "locations"
+  add_foreign_key "daily_challenges", "challenges"
   add_foreign_key "photos", "birds"
   add_foreign_key "rounds", "birds", column: "correct_bird_id"
   add_foreign_key "rounds", "birds", column: "first_distractor_id"
