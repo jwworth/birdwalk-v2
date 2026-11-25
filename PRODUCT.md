@@ -48,10 +48,11 @@ Postgres. We'll need forms for challenges, that let us create a round with the
 correct answer and three distractor birds. And for birds that end up being the
 correct answer, we'll need a way to attach photos with appropriate attribution.
 
-BirdWalk contains 52 challenges, one per park. Exactly one challenge is featured
-each calendar day. Challenges appear in a fixed, repeating sequence. After day
-52, the sequence starts over. All visitors see the same challenge on the same
-date (America/New_York).
+BirdWalk features one playable challenge per calendar day, cycling indefinitely
+through all playable challenges in their defined order. The rotation
+automatically accommodates newly added challenges. The initial content goal is
+52 national parks, but the application does not depend on a fixed number of
+challenges.
 
 Challenges are manually curated to maximize variety across the 52-day cycle.
 Common species should not dominate the correct answers. Bird selection does not
