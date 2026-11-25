@@ -1,0 +1,1 @@
+blue_jay_photo_blob: <%= ActiveStorage::FixtureSet.blob filename: "photo.png", service_name: "test" %>

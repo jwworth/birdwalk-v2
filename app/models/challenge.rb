@@ -10,11 +10,11 @@ class Challenge < ApplicationRecord
   validates :location_id, uniqueness: { message: "already has a challenge" }
 
   scope :playable, -> {
-    where(id: Round.complete.group(:challenge_id).having("count(*) = ?", ROUND_COUNT).select(:challenge_id))
+    where(id: Round.playable.group(:challenge_id).having("count(*) = ?", ROUND_COUNT).select(:challenge_id))
   }
 
   def playable?
-    rounds.size == ROUND_COUNT && rounds.all?(&:complete?)
+    rounds.size == ROUND_COUNT && rounds.all?(&:playable?)
   end
 
   def complete_round_count

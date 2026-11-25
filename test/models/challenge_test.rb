@@ -48,6 +48,15 @@ class ChallengeTest < ActiveSupport::TestCase
     assert_not_includes Challenge.playable, challenge
   end
 
+  test "is not playable when a correct bird has no photo" do
+    challenge = challenges(:acadia)
+    rounds(:acadia_round_2).update!(correct_bird: birds(:cedar_waxwing))
+
+    assert_not challenge.reload.playable?
+    assert_equal 5, challenge.complete_round_count
+    assert_not_includes Challenge.playable, challenge
+  end
+
   test "can be saved without any rounds" do
     challenge = Challenge.create!(location: locations(:yellowstone), rotation_position: 2)
 

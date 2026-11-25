@@ -101,7 +101,7 @@ class Admin::PhotosControllerTest < ActionDispatch::IntegrationTest
     get admin_birds_path, headers: @auth
 
     assert_select "tr", text: /Blue Jay/ do
-      assert_select "td.photo-count", "1"
+      assert_select "td.photo-count", "2"
     end
   end
 end

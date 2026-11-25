@@ -23,6 +23,8 @@
           <td>
             <% if challenge.playable? %>
               <span class="status playable">Playable</span>
+            <% elsif challenge.complete_round_count == Challenge::ROUND_COUNT %>
+              <span class="status incomplete">Incomplete (correct birds need photos)</span>
             <% else %>
               <span class="status incomplete">
                 Incomplete (<%= challenge.complete_round_count %> of <%= Challenge::ROUND_COUNT %> rounds)

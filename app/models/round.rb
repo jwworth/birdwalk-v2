@@ -18,8 +18,18 @@ class Round < ApplicationRecord
       .where.not(third_distractor_id: nil)
   }
 
+  scope :playable, -> { complete.where(correct_bird_id: Photo.select(:bird_id)) }
+
   def complete?
     bird_ids.all?(&:present?)
+  end
+
+  def playable?
+    complete? && correct_bird.photos.any?
+  end
+
+  def birds
+    [ correct_bird, first_distractor, second_distractor, third_distractor ]
   end
 
   private

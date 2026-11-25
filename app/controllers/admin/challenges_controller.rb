@@ -4,7 +4,7 @@ module Admin
     before_action :set_form_options, only: %i[new create edit update]
 
     def index
-      @challenges = Challenge.includes(:location, :rounds).order(:rotation_position)
+      @challenges = Challenge.includes(:location, rounds: { correct_bird: :photos }).order(:rotation_position)
     end
 
     def new

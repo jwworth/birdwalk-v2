@@ -23,6 +23,14 @@ class Admin::ChallengesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".status.incomplete", /0 of 5 rounds/
   end
 
+  test "lists a challenge whose correct birds lack photos as incomplete" do
+    rounds(:acadia_round_2).update!(correct_bird: birds(:cedar_waxwing))
+
+    get admin_challenges_path, headers: @auth
+
+    assert_select ".status.incomplete", /correct birds need photos/
+  end
+
   test "new form shows five rounds with bird choices" do
     get new_admin_challenge_path, headers: @auth
 

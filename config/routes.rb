@@ -18,5 +18,9 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :api do
+    resources :challenges, only: :show
+  end
+
   root "game#show"
 end
