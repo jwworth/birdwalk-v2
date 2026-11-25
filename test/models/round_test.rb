@@ -36,6 +36,21 @@ class RoundTest < ActiveSupport::TestCase
     assert_includes round.errors[:base], "Each bird in a round must be different"
   end
 
+  test "uses the correct bird's oldest photo, breaking ties by ID" do
+    round = rounds(:acadia_round_1)
+    oldest = photos(:blue_jay)
+    tied = round.correct_bird.photos.create!(
+      oldest.slice(:source_url, :creator, :license_name, :license_url)
+        .merge(image: { io: file_fixture("photo.png").open, filename: "photo.png" })
+    )
+
+    assert_equal oldest, round.reload.photo
+
+    tied.update_column(:created_at, oldest.created_at)
+
+    assert_equal [ oldest, tied ].min_by(&:id), round.reload.photo
+  end
+
   test "database rejects duplicate birds in a round" do
     round = @challenge.rounds.build(position: 1, correct_bird: birds(:blue_jay), second_distractor: birds(:blue_jay))
 

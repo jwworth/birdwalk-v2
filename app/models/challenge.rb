@@ -13,6 +13,13 @@ class Challenge < ApplicationRecord
     where(id: Round.playable.group(:challenge_id).having("count(*) = ?", ROUND_COUNT).select(:challenge_id))
   }
 
+  scope :with_game_data, -> {
+    includes(:location, rounds: [
+      :first_distractor, :second_distractor, :third_distractor,
+      { correct_bird: { photos: { image_attachment: :blob } } }
+    ])
+  }
+
   def playable?
     rounds.size == ROUND_COUNT && rounds.all?(&:playable?)
   end

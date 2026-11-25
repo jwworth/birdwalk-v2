@@ -32,6 +32,10 @@ class Round < ApplicationRecord
     [ correct_bird, first_distractor, second_distractor, third_distractor ]
   end
 
+  def photo
+    correct_bird.photos.min_by { |photo| [ photo.created_at, photo.id ] }
+  end
+
   private
 
   def bird_ids
