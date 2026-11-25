@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
 import { fetchChallenge, submitScore, type Answer, type Challenge, type ScoreResult } from './api'
-import CompletionScreen from './components/CompletionScreen'
 import GameScreen from './components/GameScreen'
 import HomeScreen from './components/HomeScreen'
+import ResultsScreen from './components/ResultsScreen'
+import ScoringScreen from './components/ScoringScreen'
 
 type GameState =
   | { screen: 'home'; status: 'idle' | 'loading' | 'error'; error?: string }
@@ -10,7 +11,12 @@ type GameState =
   | { screen: 'scoring'; challenge: Challenge; answers: Answer[]; status: 'submitting' | 'error'; error?: string }
   | { screen: 'complete'; challenge: Challenge; answers: Answer[]; score: ScoreResult }
 
-export default function App({ challengeId }: { challengeId?: string }) {
+type Props = {
+  challengeId?: string
+  challengeDate: string
+}
+
+export default function App({ challengeId, challengeDate }: Props) {
   const [state, setState] = useState<GameState>({ screen: 'home', status: 'idle' })
   // Clicks can arrive before React re-renders, so state alone can't prevent a second submission.
   const scoring = useRef(false)
@@ -79,7 +85,7 @@ export default function App({ challengeId }: { challengeId?: string }) {
         )
       case 'scoring':
         return (
-          <CompletionScreen
+          <ScoringScreen
             location={state.challenge.location}
             status={state.status}
             error={state.error}
@@ -87,7 +93,7 @@ export default function App({ challengeId }: { challengeId?: string }) {
           />
         )
       case 'complete':
-        return <CompletionScreen location={state.challenge.location} status="complete" />
+        return <ResultsScreen score={state.score} challengeDate={challengeDate} />
     }
   }
 }

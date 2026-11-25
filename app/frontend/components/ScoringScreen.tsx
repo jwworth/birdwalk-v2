@@ -2,14 +2,14 @@ import type { Location } from '../api'
 
 type Props = {
   location: Location
-  status: 'submitting' | 'error' | 'complete'
+  status: 'submitting' | 'error'
   error?: string
-  onRetry?: () => void
+  onRetry: () => void
 }
 
-export default function CompletionScreen({ location, status, error, onRetry }: Props) {
+export default function ScoringScreen({ location, status, error, onRetry }: Props) {
   return (
-    <section className="screen completion">
+    <section className="screen scoring">
       <p className="location">{location.name}, {location.state}</p>
 
       {status === 'submitting' && <h1>Tallying your sightings…</h1>}
@@ -20,13 +20,6 @@ export default function CompletionScreen({ location, status, error, onRetry }: P
           <p className="error" role="alert">{error}</p>
           <p>Your answers are still here, so you won’t need to replay the walk.</p>
           <button type="button" className="primary" onClick={onRetry}>Try again</button>
-        </>
-      )}
-
-      {status === 'complete' && (
-        <>
-          <h1>Walk complete</h1>
-          <p className="lede">Your answers have been scored. Thanks for birding with us!</p>
         </>
       )}
     </section>

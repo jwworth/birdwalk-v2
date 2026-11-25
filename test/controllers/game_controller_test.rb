@@ -21,6 +21,14 @@ class GameControllerTest < ActionDispatch::IntegrationTest
     assert_select "div#root[data-challenge-id=?]", earlier.id.to_s
   end
 
+  test "root provides the challenge date in New York time" do
+    travel_to Time.utc(2026, 11, 26, 3, 30) do
+      get root_path
+    end
+
+    assert_select "div#root[data-challenge-date=?]", "2026-11-25"
+  end
+
   test "root skips challenges that are not playable" do
     rounds(:acadia_round_3).update!(third_distractor: nil)
 

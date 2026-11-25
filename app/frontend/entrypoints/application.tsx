@@ -6,6 +6,6 @@ const root = document.getElementById('root')!
 
 createRoot(root).render(
   <StrictMode>
-    <App challengeId={root.dataset.challengeId} />
+    <App challengeId={root.dataset.challengeId} challengeDate={root.dataset.challengeDate!} />
   </StrictMode>,
 )
